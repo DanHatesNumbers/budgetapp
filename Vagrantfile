@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
+    # Base box from https://github.com/terrywang/vagrantboxes/blob/master/archlinux-x86_64.md
     config.vm.box = "archlinux-x86_64"
 
     config.vm.network "private_network", ip: "192.168.56.102"
