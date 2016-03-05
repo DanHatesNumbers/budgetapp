@@ -1,0 +1,91 @@
+---
+- name: Set system locale
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - lineinfile:
+        state: present
+        regexp: "#en_GB.UTF-8 UTF-8"
+        line: "en_GB.UTF-8 UTF-8"
+        dest: /etc/locale.gen
+    - command: locale-gen
+    - copy:
+        dest: /etc/locale.conf
+        content: "LANG=en_GB.UTF-8"
+
+- name: Update base system
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - pacman: update_cache=yes upgrade=yes
+
+- name: Ensure python and packaging tools installed
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - pacman: name={{item}} state=present
+      with_items:
+        - python
+        - python-pip
+        - python-virtualenv
+
+- name: Install PostgreSQL
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - name: Install PostgreSQL
+      pacman: name={{item}} state=present
+      with_items:
+        - postgresql
+        - python2-psycopg2
+
+- name: Initialise PostgreSQL
+  hosts: all
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - name: Initialise PostgreSQL
+      command: initdb --locale en_GB.UTF-8 -E UTF8 -D '/var/lib/postgres/data'
+
+- name: Start PostgreSQL
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - name: Start PostgreSQL
+      service: name=postgresql state=started enabled=yes
+
+- name: Setup PostgreSQL
+  hosts: all
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+    dbname: budgetapp
+    dbuser: budgetapp_user
+    dbpassword: budgetapp
+  tasks:
+    - name: Setup PostgreSQL DB
+      postgresql_db: name={{dbname}}
+    - name: Setup PostgreSQL User
+      postgresql_user: db={{dbname}} user={{dbuser}} password={{dbpassword}} priv=ALL
+    - name: Remove superuser privs from PostgreSQL User
+      postgresql_user: user={{dbuser}} role_attr_flags=NOSUPERUSER,NOCREATEDB
+
+- name: Install project deps into virtualenv
+  hosts: all
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - pip:
+        requirements: /vagrant/src/requirements.txt
+        virtualenv: /vagrant/src/.venv
