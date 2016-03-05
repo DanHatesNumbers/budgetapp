@@ -99,3 +99,17 @@
     - pacman: name=supervisor state=present
     - copy: src=gunicorn.ini dest=/etc/supervisor.d/gunicorn.ini
     - service: name=supervisord state=restarted enabled=yes
+
+- name: Install and configure nginx
+  hosts: all
+  become: yes
+  vars:
+    ansible_python_interpreter: "/usr/bin/python2"
+  tasks:
+    - pacman: name=nginx state=present
+    - file: name=/etc/nginx/sites-available state=directory 
+    - file: name=/etc/nginx/sites-enabled state=directory 
+    - copy: src=nginx.conf dest=/etc/nginx/sites-available/default
+    - file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link
+    - lineinfile: dest=/etc/nginx/nginx.conf insertafter='http {' line='include sites-enabled/*;'
+    - service: name=nginx state=restarted enabled=yes
