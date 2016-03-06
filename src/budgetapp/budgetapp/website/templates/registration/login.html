@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Login</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <form action="{% url 'django.contrib.auth.views.login' %}" method="POST" class="form">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+            <button type="submit" class="btn btn-default">Submit</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}
