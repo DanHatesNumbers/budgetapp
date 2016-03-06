@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link href="{% static 'bootstrap-3.3.6-dist/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+
+        <script src="{% static 'jquery-2.2.1.js' %}"></script>
+        <script src="{% static 'bootstrap-3.3.6-dist/js/bootstrap.min.js' %}"></script>
+    </body>
+</html>
