@@ -1,9 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
 from dateutil import relativedelta
 import inflect
 
 class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    owner = models.ForeignKey(User)
 
     class Meta:
         abstract = True
