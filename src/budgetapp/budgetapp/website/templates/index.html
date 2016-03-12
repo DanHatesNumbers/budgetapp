@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>One Off Transactions</h2>
+{% if oneoff %}
+{% for transaction in oneoff %}
+{{ transaction }}
+{% endfor %}
+{% else %}
+No one-off transactions on account
+{% endif %}
+
+<h2>Recurring Transactions</h2>
+{% if recurring %}
+{% for transaction in recurring %}
+{{ transaction }}
+{% endfor %}
+{% else %}
+No recurring transactions on account
+{% endif %}
+
+{% endblock %}
