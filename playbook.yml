@@ -55,7 +55,7 @@
     ansible_python_interpreter: "/usr/bin/python2"
   tasks:
     - name: Initialise PostgreSQL
-      command: initdb --locale en_GB.UTF-8 -E UTF8 -D '/var/lib/postgres/data' creates=/var/lib/postgres/data
+      command: initdb --locale en_GB.UTF-8 -E UTF8 -D '/var/lib/postgres/data'
 
 - name: Start PostgreSQL
   hosts: all
