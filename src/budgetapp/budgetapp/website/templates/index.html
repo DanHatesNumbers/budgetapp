@@ -2,7 +2,9 @@
 
 {% block content %}
 
-<h2>One Off Transactions</h2>
+<h2>One-Off Transactions</h2>
+<a href="{% url 'oneoff_add' %}" class="btn btn-primary">Add</a>
+<br />
 {% if oneoff %}
 {% for transaction in oneoff %}
 {{ transaction }}
@@ -12,6 +14,8 @@ No one-off transactions on account
 {% endif %}
 
 <h2>Recurring Transactions</h2>
+<a href="{% url 'recurring_add' %}" class="btn btn-primary">Add</a>
+<br />
 {% if recurring %}
 {% for transaction in recurring %}
 {{ transaction }}
