@@ -4,6 +4,10 @@
 Vagrant.configure(2) do |config|
     # Base box from https://github.com/terrywang/vagrantboxes/blob/master/archlinux-x86_64.md
     config.vm.box = "archlinux-x86_64"
+    if Vagrant.has_plugin?("vagrant-cachier")
+        config.cache.scope = :box
+        config.cache.enable :pacman
+    end
 
     config.vm.network "private_network", ip: "192.168.56.102"
 
