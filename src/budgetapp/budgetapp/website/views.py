@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
 from django.views.generic.edit import DeleteView
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from . import models, forms
 
@@ -79,7 +79,14 @@ class OneOffDeleteView(LoginRequiredMixin, DeleteView):
     model = models.OneOffTransaction
     success_url = '/'
     template_name = 'oneoffdelete.html'
-        
+    
+    def delete(self, request, *args, **kwargs):
+        oneoff = self.get_object()
+        if oneoff.owner == request.user:
+            oneoff.delete()
+            return HttpResponseRedirect(OneOffDeleteView.success_url)
+        else:
+            raise PermissionDenied()
 
 class RecurringAddView(LoginRequiredMixin, FormView):
     template_name = 'recurringadd.html'
