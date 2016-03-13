@@ -5,10 +5,10 @@ class OneOffTransactionForm(forms.ModelForm):
 
     class Meta:
         model = models.OneOffTransaction
-        fields = ('amount', 'date',)
+        fields = ('name', 'amount', 'date',)
 
 class RecurringTransactionForm(forms.ModelForm):
 
     class Meta:
         model = models.RecurringTransaction
-        fields = ('amount', 'start_date', 'end_date', 'base_period', 'frequency',)
+        fields = ('name', 'amount', 'start_date', 'end_date', 'base_period', 'frequency',)
