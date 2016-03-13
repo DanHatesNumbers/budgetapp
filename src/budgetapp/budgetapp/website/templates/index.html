@@ -22,8 +22,8 @@
             <td>{{ transaction.name|default:"" }}</td>
             <td>{{ transaction.date }}</td>
             <td>{{ transaction.amount }}</td>
-            <td><a href="{% url 'oneoff_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a>
-            <td><a href="{% url 'oneoff_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a>
+            <td><a href="{% url 'oneoff_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a></td>
+            <td><a href="{% url 'oneoff_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -56,8 +56,8 @@ No one-off transactions on account
             <td>{{ transaction.end_date|default:"Indefinitely" }}</td>
             <td>{{ transaction.amount }}</td>
             <td>{{ transaction.get_frequency_str|title }}</td>
-            <td><a href="{% url 'recurring_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a>
-            <td><a href="{% url 'recurring_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a>
+            <td><a href="{% url 'recurring_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a></td>
+            <td><a href="{% url 'recurring_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
