@@ -12,6 +12,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
 
     def __init__(self, *args, **kwargs):
+        super(IndexView, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
 
     def get(self, *args, **kwargs): 
@@ -28,6 +29,7 @@ class OneOffAddView(LoginRequiredMixin, FormView):
     form_class = forms.OneOffTransactionForm
 
     def __init__(self, *args, **kwargs):
+        super(OneOffAddView, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None) 
 
     def form_valid(self, form):
@@ -46,6 +48,7 @@ class RecurringAddView(LoginRequiredMixin, FormView):
     form_class = forms.RecurringTransactionForm
 
     def __init__(self, *args, **kwargs):
+        super(RecurringAddView, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
 
     def form_valid(self, form):
