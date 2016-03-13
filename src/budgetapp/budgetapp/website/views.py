@@ -1,17 +1,17 @@
-from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, FormView
-from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.auth.models import User
-from django.http import Http404, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from . import models, forms
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.generic import FormView, TemplateView
+from django.views.generic.edit import DeleteView, UpdateView
+
+from . import forms, models
 
 class IndexView(LoginRequiredMixin, TemplateView):
     login_url = '/login'
     redirect_field_name = 'redirect_to'
-
     template_name = 'index.html'
 
     def __init__(self, *args, **kwargs):
@@ -26,10 +26,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
         return render(self.request,'index.html', context)
 
 class OneOffAddView(LoginRequiredMixin, FormView):
-    template_name = 'oneoffadd.html'
-    success_url = '/'
     form = forms.OneOffTransactionForm()
     form_class = forms.OneOffTransactionForm
+    success_url = '/'
+    template_name = 'oneoffadd.html'
 
     def __init__(self, *args, **kwargs):
         super(OneOffAddView, self).__init__(*args, **kwargs)
@@ -43,10 +43,10 @@ class OneOffAddView(LoginRequiredMixin, FormView):
         return super(OneOffAddView, self).form_valid(form)
 
 class OneOffEditView(LoginRequiredMixin, UpdateView):
-    template_name = 'oneoffedit.html'
-    success_url = '/'
     form_class = forms.OneOffTransactionForm
     model = models.OneOffTransaction
+    success_url = '/'
+    template_name = 'oneoffedit.html'
 
     def get(self, request, *args, **kwargs):
         self.user = request.user
@@ -85,10 +85,10 @@ class OneOffDeleteView(LoginRequiredMixin, DeleteView):
             raise PermissionDenied()
 
 class RecurringAddView(LoginRequiredMixin, FormView):
-    template_name = 'recurringadd.html'
-    success_url = '/'
     form = forms.RecurringTransactionForm()
     form_class = forms.RecurringTransactionForm
+    success_url = '/'
+    template_name = 'recurringadd.html'
 
     def __init__(self, *args, **kwargs):
         super(RecurringAddView, self).__init__(*args, **kwargs)
@@ -102,10 +102,10 @@ class RecurringAddView(LoginRequiredMixin, FormView):
         return super(RecurringAddView, self).form_valid(form)
 
 class RecurringEditView(LoginRequiredMixin, UpdateView):
-    template_name = 'recurringedit.html'
-    success_url = '/'
     form_class = forms.RecurringTransactionForm
     model = models.RecurringTransaction
+    success_url = '/'
+    template_name = 'recurringedit.html'
 
     def get(self, request, *args, **kwargs):
         self.user = request.user
