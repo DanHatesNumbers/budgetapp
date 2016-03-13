@@ -47,11 +47,14 @@ class RecurringTransaction(Transaction):
     def __str__(self):
         if self.base_period == "" or self.base_period == None:
             return ""
+        return "{0} {1}".format(self.amount, self.get_frequency_str())
+
+    def get_frequency_str(self):
         inflect_engine = inflect.engine()
         if self.frequency == 1:
-            return "{0} every {1}".format(self.amount, self.BASE_PERIOD_NAMES[self.base_period])
+            return "every {1}".format(self.amount, self.BASE_PERIOD_NAMES[self.base_period])
         else:
-            return "{0} every {1} {2}".format(self.amount, self.frequency, inflect_engine.plural(self.BASE_PERIOD_NAMES[self.base_period]))
+            return "every {1} {2}".format(self.amount, self.frequency, inflect_engine.plural(self.BASE_PERIOD_NAMES[self.base_period]))
 
     def get_dates(self):
         current_date = self.start_date
