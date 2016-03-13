@@ -12,6 +12,7 @@
             <th>Date</th>
             <th>Amount</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
             <td>{{ transaction.date }}</td>
             <td>{{ transaction.amount }}</td>
             <td><a href="{% url 'oneoff_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a>
+            <td><a href="{% url 'oneoff_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a>
         </tr>
         {% endfor %}
     </tbody>

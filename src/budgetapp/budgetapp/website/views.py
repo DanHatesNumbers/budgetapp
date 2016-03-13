@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
+from django.views.generic.edit import DeleteView
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
@@ -73,6 +74,12 @@ class OneOffEditView(LoginRequiredMixin, FormView):
             return super(OneOffEditView, self).form_valid(form)
         else:
             raise PermissionDenied()
+
+class OneOffDeleteView(LoginRequiredMixin, DeleteView):
+    model = models.OneOffTransaction
+    success_url = '/'
+    template_name = 'oneoffdelete.html'
+        
 
 class RecurringAddView(LoginRequiredMixin, FormView):
     template_name = 'recurringadd.html'
