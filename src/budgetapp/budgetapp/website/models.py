@@ -4,6 +4,7 @@ from dateutil import relativedelta
 import inflect
 
 class Transaction(models.Model):
+    name = models.CharField(max_length=120, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     owner = models.ForeignKey(User)
 
