@@ -42,6 +42,7 @@ No one-off transactions on account
             <th>Amount</th>
             <th>Frequency</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -52,6 +53,7 @@ No one-off transactions on account
             <td>{{ transaction.amount }}</td>
             <td>{{ transaction.get_frequency_str|title }}</td>
             <td><a href="{% url 'recurring_edit' pk=transaction.pk %}" class="btn btn-default">Edit</a>
+            <td><a href="{% url 'recurring_delete' pk=transaction.pk %}" class="btn btn-danger">Delete</a>
         </tr>
         {% endfor %}
     </tbody>

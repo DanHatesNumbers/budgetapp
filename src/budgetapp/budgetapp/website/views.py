@@ -137,3 +137,16 @@ class RecurringEditView(LoginRequiredMixin, FormView):
             return super(RecurringEditView, self).form_valid(form)
         else:
             raise PermissionDenied()
+
+class RecurringDeleteView(LoginRequiredMixin, DeleteView):
+    model = models.RecurringTransaction
+    success_url = '/'
+    template_name = 'recurringdelete.html'
+    
+    def delete(self, request, *args, **kwargs):
+        oneoff = self.get_object()
+        if oneoff.owner == request.user:
+            oneoff.delete()
+            return HttpResponseRedirect(RecurringDeleteView.success_url)
+        else:
+            raise PermissionDenied()

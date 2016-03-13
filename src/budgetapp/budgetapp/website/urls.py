@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r'^transactions/oneoff/(?P<pk>\d+)/delete$', views.OneOffDeleteView.as_view(), name='oneoff_delete'),
     url(r'^transactions/recurring/add$', views.RecurringAddView.as_view(), name='recurring_add'),
     url(r'^transactions/recurring/(?P<pk>\d+)/edit$', views.RecurringEditView.as_view(), name='recurring_edit'),
+    url(r'^transactions/recurring/(?P<pk>\d+)/delete$', views.RecurringDeleteView.as_view(), name='recurring_delete'),
     url(r'^login$', 'django.contrib.auth.views.login'),
     url(r'^logout$', 'django.contrib.auth.views.logout'),
 )
