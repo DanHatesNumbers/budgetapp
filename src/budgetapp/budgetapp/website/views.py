@@ -101,34 +101,30 @@ class RecurringAddView(LoginRequiredMixin, FormView):
         newtransaction.save()
         return super(RecurringAddView, self).form_valid(form)
 
-class RecurringEditView(LoginRequiredMixin, FormView):
+class RecurringEditView(LoginRequiredMixin, UpdateView):
     template_name = 'recurringedit.html'
     success_url = '/'
     form_class = forms.RecurringTransactionForm
+    model = models.RecurringTransaction
 
     def get(self, request, *args, **kwargs):
-        self.pk = kwargs.pop('pk', None)
+        self.user = request.user
         return super(RecurringEditView, self).get(self, request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.pk = kwargs.pop('pk', None)
+        self.user = request.user
         return super(RecurringEditView, self).post(self, request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(RecurringEditView, self).get_context_data(**kwargs)
-        context['pk'] = self.pk
-        return context
-
-    def get_form(self, form_class):
-        try:
-            oneoff = models.RecurringTransaction.objects.get(id=self.pk)
-            return form_class(instance=oneoff, **self.get_form_kwargs())
-        except models.RecurringTransaction.DoesNotExist:
-            raise Http404("Transaction can not be found")
+    def get_object(self, queryset=None):
+        obj = super(RecurringEditView, self).get_object(queryset)
+        if obj.owner == self.user:
+            return obj
+        else:
+            raise PermissionDenied()
 
     def form_valid(self, form):
         editedoneoff = form.save(commit=False)
-        if models.RecurringTransaction.objects.get(id=self.pk).owner == self.request.user:
+        if self.get_object().owner == self.user:
             editedoneoff.save()
             return super(RecurringEditView, self).form_valid(form)
         else:
