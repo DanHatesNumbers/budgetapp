@@ -1,11 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
+
+import datetime
 
 from . import forms, models
 
@@ -19,9 +22,11 @@ class IndexView(LoginRequiredMixin, TemplateView):
         self.request = kwargs.pop('request', None)
 
     def get(self, *args, **kwargs): 
+        end_date_optional = Q(end_date__isnull=True)
+        end_date_in_range = Q(end_date__gte=datetime.date.today())
         context = {
-            'oneoff': self.request.user.oneofftransaction_set.all(),
-            'recurring': self.request.user.recurringtransaction_set.all(),
+            'oneoff': self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()),
+            'recurring': self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
         }
         return render(self.request,'index.html', context)
 
