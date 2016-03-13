@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-md-4">
         {% bootstrap_messages %}
-        <form action="/transactions/oneoff/add" method="post" clas="form">
+        <form action="/transactions/oneoff/add" method="post" class="form">
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
