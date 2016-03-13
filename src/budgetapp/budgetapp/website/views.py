@@ -36,9 +36,7 @@ class OneOffAddView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         user = self.request.user
-        newtransaction = models.OneOffTransaction()
-        newtransaction.amount = form.cleaned_data['amount']
-        newtransaction.date = form.cleaned_data['date']
+        newtransaction = form.save(commit=False)
         newtransaction.owner = user
         newtransaction.save()
         return super(OneOffAddView, self).form_valid(form)
@@ -88,12 +86,7 @@ class RecurringAddView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         user = self.request.user
-        newtransaction = models.RecurringTransaction()
-        newtransaction.amount = form.cleaned_data['amount']
-        newtransaction.start_date = form.cleaned_data['start_date']
-        newtransaction.end_date = form.cleaned_data['end_date']
-        newtransaction.base_period = form.cleaned_data['base_period']
-        newtransaction.frequency = form.cleaned_data['frequency']
+        newtransaction = form.save(commit=False)
         newtransaction.owner = user
         newtransaction.save()
         return super(RecurringAddView, self).form_valid(form)
