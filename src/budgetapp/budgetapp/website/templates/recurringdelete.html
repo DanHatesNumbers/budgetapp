@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{% block content %}
+<h2>Delete a Recurring Transaction</h2>
+<p>Are you sure you want to delete this transaction?</p>
+<div class="row">
+    <div class="col-md-1">
+        Start Date
+    </div>
+    <div class="col-md-2">
+        {{ object.start_date }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-1">
+        End Date
+    </div>
+    <div class="col-md-2">
+        {{ object.end_date|default:"Indefinitely"}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-1">
+        Amount
+    </div>
+    <div class="col-md-2">
+        {{ object.amount }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-1">
+        Frequency
+    </div>
+    <div class="col-md-2">
+        {{ object.get_frequency_str|title }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" class="form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
