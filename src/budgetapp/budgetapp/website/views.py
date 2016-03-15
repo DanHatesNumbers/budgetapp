@@ -9,6 +9,7 @@ from django.views.generic import FormView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
 
 import datetime
+import itertools
 
 from . import forms, models
 
@@ -150,3 +151,27 @@ class RecurringDeleteView(LoginRequiredMixin, DeleteView):
 
 class BalanceSheetView(LoginRequiredMixin, TemplateView):
     template_name = "balancesheet.html"
+
+    def __init__(self, *args, **kwargs):
+        super(BalanceSheetView, self).__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
+
+    def get(self, *args, **kwargs):
+        end_date = datetime.date.today().replace(year=2017)
+        oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
+
+        end_date_optional = Q(end_date__isnull=True)
+        end_date_in_range = Q(end_date__gte=datetime.date.today())
+        recurrings = self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
+
+        expanded_recurrings = list()
+        for transaction in recurrings:
+            dates = [x for x in transaction.get_dates() if x <= end_date]
+            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date, transaction.amount, transaction.owner, transaction.name), dates)
+            expanded_recurrings += expanded_oneoffs
+
+        all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
+        
+        context = {"transactions": all_transactions}
+        return render(self.request, BalanceSheetView.template_name, context)
+
