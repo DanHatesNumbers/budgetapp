@@ -15,6 +15,15 @@ class Transaction(models.Model):
 class OneOffTransaction(Transaction):
     date = models.DateField()
 
+    @classmethod
+    def create(cls, transaction_date, amount, owner, name = None):
+        transaction = cls()
+        transaction.date = transaction_date
+        transaction.amount = amount
+        transaction.owner = owner
+        transaction.name = name
+        return transaction
+
     def __str__(self):
         return "{0} on {1}".format(self.amount, self.date)
 
