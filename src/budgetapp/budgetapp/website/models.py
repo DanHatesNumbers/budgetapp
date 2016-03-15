@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 from dateutil import relativedelta
 import inflect
 
@@ -60,11 +61,14 @@ class RecurringTransaction(Transaction):
     def get_dates(self):
         current_date = self.start_date
         end_date = self.end_date if self.end_date != None else date.max
-        delta = get_relativedelta() 
+        delta = self.get_relativedelta() 
 
-        while current_date <= self.end_date:
+        while current_date <= end_date:
             yield current_date
-            current_date = current_date + delta 
+            try:
+                current_date = current_date + delta 
+            except OverflowError:
+                break
 
     def get_relativedelta(self):
         if self.base_period == self.DAILY:
