@@ -147,3 +147,6 @@ class RecurringDeleteView(LoginRequiredMixin, DeleteView):
             return HttpResponseRedirect(RecurringDeleteView.success_url)
         else:
             raise PermissionDenied()
+
+class BalanceSheetView(LoginRequiredMixin, TemplateView):
+    template_name = "balancesheet.html"
