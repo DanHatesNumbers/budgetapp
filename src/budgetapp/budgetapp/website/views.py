@@ -157,7 +157,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         self.request = kwargs.pop('request', None)
 
     def get(self, *args, **kwargs):
-        end_date = datetime.date.today().replace(year=2017)
+        end_date = datetime.datetime.now().replace(year=2017)
         oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
 
         end_date_optional = Q(end_date__isnull=True)
@@ -166,8 +166,8 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
 
         expanded_recurrings = list()
         for transaction in recurrings:
-            dates = [x for x in transaction.get_dates() if x <= end_date]
-            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date, transaction.amount, transaction.owner, transaction.name), dates)
+            dates = transaction.get_dates(end_date)
+            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.name), dates)
             expanded_recurrings += expanded_oneoffs
 
         all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
