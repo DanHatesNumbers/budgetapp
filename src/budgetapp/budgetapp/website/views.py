@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.core.urlresolvers import reverse_lazy
+from django.db.models.query_utils import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -149,14 +150,17 @@ class RecurringDeleteView(LoginRequiredMixin, DeleteView):
         else:
             raise PermissionDenied()
 
-class BalanceSheetView(LoginRequiredMixin, TemplateView):
+class BalanceSheetView(LoginRequiredMixin, FormView):
+    form = forms.BalanceSheetForm()
+    form_class = forms.BalanceSheetForm
+    success_url = reverse_lazy('balance_sheet')
     template_name = "balancesheet.html"
 
     def __init__(self, *args, **kwargs):
         super(BalanceSheetView, self).__init__(*args, **kwargs)
         self.request = kwargs.pop('request', None)
 
-    def get(self, *args, **kwargs):
+    def form_valid(self, form):
         end_date = datetime.datetime.now().replace(year=2017)
         oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
 
@@ -171,7 +175,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             expanded_recurrings += expanded_oneoffs
 
         all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
+        import pdb; pdb.set_trace()
         
-        context = {"transactions": all_transactions}
-        return render(self.request, BalanceSheetView.template_name, context)
+        return self.render_to_response(self.get_context_data(transactions=all_transactions, balance=form.cleaned_data['balance']))
 

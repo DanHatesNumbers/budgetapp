@@ -12,3 +12,7 @@ class RecurringTransactionForm(forms.ModelForm):
     class Meta:
         model = models.RecurringTransaction
         fields = ('name', 'amount', 'start_date', 'end_date', 'base_period', 'frequency',)
+
+class BalanceSheetForm(forms.Form):
+    balance = forms.DecimalField(max_digits=10, decimal_places=2)
+

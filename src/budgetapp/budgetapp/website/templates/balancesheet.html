@@ -1,1 +1,19 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-4">
+        {% bootstrap_messages %}
+        <form action="{% url 'balance_sheet' %}" method="post" class="form">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+            <button type="submit" class="btn btn-success">Refresh</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}
