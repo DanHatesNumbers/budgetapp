@@ -175,7 +175,6 @@ class BalanceSheetView(LoginRequiredMixin, FormView):
             expanded_recurrings += expanded_oneoffs
 
         all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
-        import pdb; pdb.set_trace()
         
         return self.render_to_response(self.get_context_data(transactions=all_transactions, balance=form.cleaned_data['balance']))
 
