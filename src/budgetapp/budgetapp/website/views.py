@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -199,8 +200,7 @@ class UserRegistrationView(FormView):
     template_name = 'registration/register.html'
 
     def form_valid(self, form):
-        user = models.User()
-        user.email = form.cleaned_data['email']
-        user.set_password(form.cleaned_data['password2'])
-        user.save()
+        user = models.User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['password2'])
+        authenticated_user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password2'])
+        login(self.request, authenticated_user)
         return super(UserRegistrationView, self).form_valid(form)
