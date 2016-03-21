@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
-
 {% block content %}
-
 <div class="row">
     <div class="col-md-4">
         {% bootstrap_messages %}
@@ -13,6 +11,30 @@
             <button type="submit" class="btn btn-success">Refresh</button>
             {% endbuttons %}
         </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Transaction Name</td>
+                    <td>Amount</td>
+                    <td>Balance</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.name|default:""|title }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.balance }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
