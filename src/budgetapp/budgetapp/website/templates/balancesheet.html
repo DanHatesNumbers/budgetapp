@@ -2,6 +2,11 @@
 {% load bootstrap3 %}
 {% block content %}
 <div class="row">
+    <div class="col-md-12">
+        <h2>Balance Sheet</h2>
+    </div>
+</div>
+<div class="row">
     <div class="col-md-3">
         {% bootstrap_messages %}
         <form action="{% url 'balance_sheet' %}" method="post" class="form-horizontal">
