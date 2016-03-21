@@ -183,7 +183,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         for transaction in recurrings:
             dates = transaction.get_dates(end_date)
             expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.name), dates)
-            expanded_recurrings += expanded_oneoffs
+            expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
 
         all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
         current_balance = self.balance
