@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.core.urlresolvers import reverse_lazy
+from django.db.models.query_utils import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -9,6 +10,8 @@ from django.views.generic import FormView, TemplateView
 from django.views.generic.edit import DeleteView, UpdateView
 
 import datetime
+from decimal import Decimal
+import itertools
 
 from . import forms, models
 
@@ -147,3 +150,45 @@ class RecurringDeleteView(LoginRequiredMixin, DeleteView):
             return HttpResponseRedirect(RecurringDeleteView.success_url)
         else:
             raise PermissionDenied()
+
+class BalanceSheetView(LoginRequiredMixin, TemplateView):
+    form_class = forms.BalanceSheetForm
+    success_url = reverse_lazy('balance_sheet')
+    template_name = "balancesheet.html"
+    initial = {'balance': Decimal(0.0)}
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        self.balance = self.initial['balance']
+        transactions = self.generate_transaction_list()
+        return render(request, self.template_name, {'form': form, 'transactions': transactions})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            self.balance = form.cleaned_data['balance']
+            transactions = self.generate_transaction_list()
+            return render(request, self.template_name, {'form': form, 'transactions': transactions})
+        return render(request, self.template_name, {'form': form})
+
+    def generate_transaction_list(self):
+        end_date = datetime.datetime.now().replace(year=2017)
+        oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
+
+        end_date_optional = Q(end_date__isnull=True)
+        end_date_in_range = Q(end_date__gte=datetime.date.today())
+        recurrings = self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
+
+        expanded_recurrings = list()
+        for transaction in recurrings:
+            dates = transaction.get_dates(end_date)
+            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.name), dates)
+            expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
+
+        all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
+        current_balance = self.balance
+        for transaction in all_transactions:
+            current_balance += transaction.amount
+            transaction.balance = current_balance
+
+        return all_transactions

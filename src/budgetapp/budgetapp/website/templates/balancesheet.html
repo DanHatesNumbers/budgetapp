@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Balance Sheet</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        {% bootstrap_messages %}
+        <form action="{% url 'balance_sheet' %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {% bootstrap_form form layout='horizontal' %}
+            {% buttons layout='horizontal' %}
+            <button type="submit" class="btn btn-success">Refresh</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% if transactions %}
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Transaction Name</td>
+                    <td>Amount</td>
+                    <td>Balance</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                {% if transaction.balance < 0 %}
+                <tr class="danger">
+                {% else %}
+                <tr>
+                {% endif %}
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.name|default:""|title }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.balance }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<p>You don't appear to have any transactions setup</p>
+{% endif %}
+
+{% endblock %}

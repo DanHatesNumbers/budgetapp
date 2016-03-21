@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from dateutil import relativedelta
+from datetime import date
+from dateutil import relativedelta, rrule
 import inflect
 
 class Transaction(models.Model):
@@ -13,6 +14,15 @@ class Transaction(models.Model):
 
 class OneOffTransaction(Transaction):
     date = models.DateField()
+
+    @classmethod
+    def create(cls, transaction_date, amount, owner, name = None):
+        transaction = cls()
+        transaction.date = transaction_date
+        transaction.amount = amount
+        transaction.owner = owner
+        transaction.name = name
+        return transaction
 
     def __str__(self):
         return "{0} on {1}".format(self.amount, self.date)
@@ -40,6 +50,13 @@ class RecurringTransaction(Transaction):
         YEARLY: 'year',
     }
 
+    RRULE_MAPPINGS = {
+        DAILY: rrule.DAILY,
+        WEEKLY: rrule.WEEKLY,
+        MONTHLY: rrule.MONTHLY,
+        YEARLY: rrule.YEARLY
+    }
+
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     base_period = models.CharField(max_length=2, choices=BASE_PERIOD_CHOICES, blank=False)
@@ -57,23 +74,20 @@ class RecurringTransaction(Transaction):
         else:
             return "every {1} {2}".format(self.amount, self.frequency, inflect_engine.plural(self.BASE_PERIOD_NAMES[self.base_period]))
 
-    def get_dates(self):
-        current_date = self.start_date
-        end_date = self.end_date if self.end_date != None else date.max
-        delta = get_relativedelta() 
-
-        while current_date <= self.end_date:
-            yield current_date
-            current_date = current_date + delta 
-
-    def get_relativedelta(self):
-        if self.base_period == self.DAILY:
-            return relativedelta.relativedelta(days=self.frequency)
-        elif self.base_period == self.WEEKLY:
-            return relativedelta.relativedelta(weeks=self.frequency)
-        elif self.base_period == self.MONTHLY:
-            return relativedelta.relativedelta(months=self.frequency)
-        elif self.base_period == self.QUARTERLY:
-            return relativedelta.relativedelta(months=3*self.frequency)
+    def get_dates(self, force_end_date = None):
+        end_date = None
+        if force_end_date != None and self.end_date != None:
+            end_date = min(force_end_date, self.end_date)
+        elif force_end_date != None and self.end_date == None:
+            end_date = force_end_date
         else:
-            return relativedelta.relativedelta(years=self.frequency)
+            end_date = date.max
+
+        rule = self.get_rrule(end_date)
+        return list(rule)
+
+    def get_rrule(self, end_date):
+        if self.base_period == self.QUARTERLY:
+            return rrule.rrule(MONTHLY, dtstart=self.start_date, until=end_date, interval=self.frequency*3)
+        else:
+            return rrule.rrule(self.RRULE_MAPPINGS[self.base_period], dtstart=self.start_date, until=end_date, interval=self.frequency)
