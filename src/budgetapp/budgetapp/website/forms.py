@@ -27,5 +27,7 @@ class UserRegistrationForm(forms.Form):
         password2 = cleaned_data['password2']
         if password1 != password2:
             raise forms.ValidationError("Passwords did not match")
+        if models.User.objects.filter(email=cleaned_data['email']).exists():
+            raise forms.ValidationError("Email address already exists")
 
         return cleaned_data
