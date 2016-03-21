@@ -192,3 +192,15 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             transaction.balance = current_balance
 
         return all_transactions
+
+class UserRegistrationView(FormView):
+    form_class = forms.UserRegistrationForm
+    success_url = '/'
+    template_name = 'registration/register.html'
+
+    def form_valid(self, form):
+        user = models.User()
+        user.email = form.cleaned_data['email']
+        user.set_password(form.cleaned_data['password2'])
+        user.save()
+        return super(UserRegistrationView, self).form_valid(form)

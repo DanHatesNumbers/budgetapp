@@ -16,4 +16,5 @@ urlpatterns = patterns(
     url(r'^balancesheet$', views.BalanceSheetView.as_view(), name='balance_sheet'),
     url(r'^login$', 'django.contrib.auth.views.login'),
     url(r'^logout$', 'django.contrib.auth.views.logout'),
+    url(r'^register$', views.UserRegistrationView.as_view(), name='register'),
 )
