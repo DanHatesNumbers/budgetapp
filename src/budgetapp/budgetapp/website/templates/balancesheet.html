@@ -32,7 +32,11 @@
             </thead>
             <tbody>
             {% for transaction in transactions %}
+                {% if transaction.balance < 0 %}
+                <tr class="danger">
+                {% else %}
                 <tr>
+                {% endif %}
                     <td>{{ transaction.date }}</td>
                     <td>{{ transaction.name|default:""|title }}</td>
                     <td>{{ transaction.amount }}</td>
