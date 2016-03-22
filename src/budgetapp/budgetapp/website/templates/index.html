@@ -28,6 +28,23 @@
         {% endfor %}
     </tbody>
 </table>
+<nav>
+    <ul class="pagination">
+        {% if oneoff.has_previous %}
+        <li><a href="?oneoffpage={{ oneoff.previous_page_number }}&recurringpage={{ recurring.number }}">&laquo;</a></li>
+        {% else %}        
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        {% endif %}
+        {% for i in oneoff.paginator.page_range %}
+        <li {% if oneoff.number == i %} class="active" {% endif %}><a href="?oneoffpage={{ i }}&recurringpage={{ recurring.number }}">{{ i }}</a></li>
+        {% endfor %}
+        {% if oneoff.has_next %}
+        <li><a href="?oneoffpage={{ oneoff.next_page_number }}&recurringpage={{ recurring.number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><a href="#">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
 {% else %}
 No one-off transactions on account
 {% endif %}
@@ -62,6 +79,23 @@ No one-off transactions on account
         {% endfor %}
     </tbody>
 </table>
+<nav>
+    <ul class="pagination">
+        {% if recurring.has_previous %}
+        <li><a href="?oneoffpage={{ oneoff.number }}&recurringpage={{ recurring.previous_page_number }}">&laquo;</a></li>
+        {% else %}        
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        {% endif %}
+        {% for i in recurring.paginator.page_range %}
+        <li {% if recurring.number == i %} class="active" {% endif %}><a href="?oneoffpage={{ oneoff.number }}&recurringpage={{ i }}">{{ i }}</a></li>
+        {% endfor %}
+        {% if recurring.has_next %}
+        <li><a href="?oneoffpage={{ oneoff.number }}&recurringpage={{ recurring.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><a href="#">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
 {% else %}
 No recurring transactions on account
 {% endif %}
