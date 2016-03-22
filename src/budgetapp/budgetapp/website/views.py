@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse_lazy
 from django.db.models.query_utils import Q
 from django.http import Http404, HttpResponseRedirect
@@ -162,7 +163,16 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         balance = request.session.get('balance', Decimal(0.0))
         initial = {'balance': balance}
         form = self.form_class(initial=initial)
-        transactions = self.generate_transaction_list(balance)
+
+        transaction_list = self.generate_transaction_list(balance)
+        paginator = Paginator(transaction_list, 25)
+        page = self.request.GET.get('page')
+        try:
+            transactions = paginator.page(page)
+        except PageNotAnInteger:
+            transactions = paginator.page(1)
+        except EmptyPage:
+            transactions = paginator.page(paginator.num_pages)
         return render(request, self.template_name, {'form': form, 'transactions': transactions})
 
     def post(self, request, *args, **kwargs):

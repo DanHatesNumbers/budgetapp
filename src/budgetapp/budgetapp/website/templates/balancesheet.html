@@ -45,6 +45,23 @@
             {% endfor %}
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination">
+                {% if transactions.has_previous %}
+                <li><a href="?page={{ transactions.previous_page_number }}">&laquo;</a></li>
+                {% else %}        
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                {% endif %}
+                {% for i in transactions.paginator.page_range %}
+                <li {% if transactions.number == i %} class="active" {% endif %}><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endfor %}
+                {% if transactions.has_next %}
+                <li><a href="?page={{ transactions.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                <li class="disabled"><a href="#">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 </div>
 {% else %}
