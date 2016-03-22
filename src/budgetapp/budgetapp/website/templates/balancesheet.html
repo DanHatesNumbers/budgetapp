@@ -39,8 +39,8 @@
                 {% endif %}
                     <td>{{ transaction.date }}</td>
                     <td>{{ transaction.name|default:""|title }}</td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.balance }}</td>
+                    <td>{{ transaction.amount|stringformat:"1.2f" }}</td>
+                    <td>{{ transaction.balance|stringformat:"1.2f" }}</td>
                 </tr>
             {% endfor %}
             </tbody>

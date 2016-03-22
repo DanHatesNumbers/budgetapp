@@ -5,3 +5,4 @@ python-dateutil==2.5.0
 inflect==0.2.5
 django-bootstrap3==7.0.0
 django-extensions==1.6.1
+simplejson==3.8.2

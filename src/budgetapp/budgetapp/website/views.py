@@ -157,23 +157,22 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
     form_class = forms.BalanceSheetForm
     success_url = reverse_lazy('balance_sheet')
     template_name = "balancesheet.html"
-    initial = {'balance': Decimal(0.0)}
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        self.balance = self.initial['balance']
-        transactions = self.generate_transaction_list()
+        balance = request.session.get('balance', Decimal(0.0))
+        initial = {'balance': balance}
+        form = self.form_class(initial=initial)
+        transactions = self.generate_transaction_list(balance)
         return render(request, self.template_name, {'form': form, 'transactions': transactions})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            self.balance = form.cleaned_data['balance']
-            transactions = self.generate_transaction_list()
-            return render(request, self.template_name, {'form': form, 'transactions': transactions})
+            request.session['balance'] = form.cleaned_data['balance']
+            return HttpResponseRedirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 
-    def generate_transaction_list(self):
+    def generate_transaction_list(self, balance):
         end_date = datetime.datetime.now().replace(year=2017)
         oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
 
@@ -188,7 +187,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
 
         all_transactions = sorted(sorted(oneoffs + expanded_recurrings, key=attrgetter('amount')), key=attrgetter('date'))
-        current_balance = self.balance
+        current_balance = Decimal(balance)
         for transaction in all_transactions:
             current_balance += transaction.amount
             transaction.balance = current_balance
