@@ -13,6 +13,7 @@ from django.views.generic.edit import DeleteView, UpdateView
 import datetime
 from decimal import Decimal
 import itertools
+from operator import attrgetter
 
 from . import forms, models
 
@@ -186,7 +187,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.name), dates)
             expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
 
-        all_transactions = sorted(oneoffs + expanded_recurrings, key=lambda x: x.date)
+        all_transactions = sorted(sorted(oneoffs + expanded_recurrings, key=attrgetter('amount')), key=attrgetter('date'))
         current_balance = self.balance
         for transaction in all_transactions:
             current_balance += transaction.amount
