@@ -28,13 +28,34 @@ class IndexView(LoginRequiredMixin, TemplateView):
         self.request = kwargs.pop('request', None)
 
     def get(self, *args, **kwargs): 
+        context = self.build_paged_context_dictionary()
+        return render(self.request,'index.html', context)
+
+    def build_paged_context_dictionary(self):
+        oneoff_list = self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today())
+        oneoff_paginator = Paginator(oneoff_list, 5)
+        oneoff_page = self.request.GET.get('oneoffpage')
+        try:
+            oneoff = oneoff_paginator.page(oneoff_page)
+        except PageNotAnInteger:
+            oneoff = oneoff_paginator.page(1)
+        except EmptyPage:
+            oneoff = oneoff_paginator.page(oneoff_paginator.num_pages)
+
         end_date_optional = Q(end_date__isnull=True)
         end_date_in_range = Q(end_date__gte=datetime.date.today())
-        context = {
-            'oneoff': self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()),
-            'recurring': self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
-        }
-        return render(self.request,'index.html', context)
+        recurring_list = self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
+        recurring_paginator = Paginator(recurring_list, 5)
+        recurring_page = self.request.GET.get('recurringpage')
+        try:
+            recurring = recurring_paginator.page(recurring_page)
+        except PageNotAnInteger:
+            recurring = recurring_paginator.page(1)
+        except EmptyPage:
+            recurring = recurring_paginator.page(recurring_paginator.num_pages)
+
+        return {'oneoff': oneoff, 'recurring': recurring}
+
 
 class OneOffAddView(LoginRequiredMixin, FormView):
     form = forms.OneOffTransactionForm()
