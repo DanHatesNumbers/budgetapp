@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -204,3 +204,31 @@ class UserRegistrationView(FormView):
         authenticated_user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password2'])
         login(self.request, authenticated_user)
         return super(UserRegistrationView, self).form_valid(form)
+
+class UserProfileManagementView(FormView):
+    form_class = forms.UserProfileManagementForm
+    success_url = reverse_lazy('profile')
+    template_name = "registration/profile.html"
+
+    def get(self, request, *args, **kwargs):
+        self.user = request.user
+        self.request = request
+        return super(UserProfileManagementView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.user = request.user
+        self.request = request
+        return super(UserProfileManagementView, self).post(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(UserProfileManagementView, self).get_form_kwargs()
+        kwargs['user'] = self.user
+        return kwargs
+
+    def form_valid(self, form):
+        if form.cleaned_data['new_password2']:
+            self.user.set_password(form.cleaned_data['new_password2'])
+            self.user.save()
+            update_session_auth_hash(self.request, self.user)
+
+        return super(UserProfileManagementView, self).form_valid(form)
