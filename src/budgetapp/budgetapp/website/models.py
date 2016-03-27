@@ -77,6 +77,7 @@ class RecurringTransaction(Transaction):
     end_date = models.DateField(null=True, blank=True)
     base_period = models.CharField(max_length=2, choices=BASE_PERIOD_CHOICES, blank=False)
     frequency = models.IntegerField()
+    is_salary = models.BooleanField(default=False)
 
     def __str__(self):
         if self.base_period == "" or self.base_period == None:
