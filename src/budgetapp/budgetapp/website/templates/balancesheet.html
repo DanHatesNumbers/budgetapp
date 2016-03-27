@@ -28,6 +28,7 @@
                     <td>Transaction Name</td>
                     <td>Amount</td>
                     <td>Balance</td>
+                    <td>Surplus/Defecit</td>
                 </tr>
             </thead>
             <tbody>
@@ -41,6 +42,7 @@
                     <td>{{ transaction.name|default:""|title }}</td>
                     <td>{{ transaction.amount|stringformat:"1.2f" }}</td>
                     <td>{{ transaction.balance|stringformat:"1.2f" }}</td>
+                    <td>{% if transaction.unallocated != None %}{{ transaction.unallocated|stringformat:"1.2f" }}{% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>

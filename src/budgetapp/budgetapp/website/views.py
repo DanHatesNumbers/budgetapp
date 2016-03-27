@@ -214,7 +214,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         expanded_recurrings = list()
         for transaction in recurrings:
             dates = transaction.get_dates(end_date)
-            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.name), dates)
+            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.is_salary, transaction.name), dates)
             expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
 
         all_transactions = sorted(sorted(oneoffs + expanded_recurrings, key=attrgetter('amount')), key=attrgetter('date'))
@@ -222,6 +222,11 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         for transaction in all_transactions:
             current_balance += transaction.amount
             transaction.balance = current_balance
+        
+        for transaction in all_transactions:
+            if transaction.is_salary:
+                remaining_transactions = itertools.takewhile(lambda t: t.is_salary != True, all_transactions[all_transactions.index(transaction)+1:])
+                transaction.unallocated = transaction.amount + sum(map(lambda t: t.amount, remaining_transactions))
 
         return all_transactions
 
