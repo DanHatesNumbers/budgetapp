@@ -24,6 +24,7 @@ class Transaction(models.Model):
     name = models.CharField(max_length=120, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     owner = models.ForeignKey(User)
+    is_salary = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
@@ -32,11 +33,12 @@ class OneOffTransaction(Transaction):
     date = models.DateField()
 
     @classmethod
-    def create(cls, transaction_date, amount, owner, name = None):
+    def create(cls, transaction_date, amount, owner, is_salary, name = None):
         transaction = cls()
         transaction.date = transaction_date
         transaction.amount = amount
         transaction.owner = owner
+        transaction.is_salary = is_salary
         transaction.name = name
         return transaction
 
@@ -77,7 +79,6 @@ class RecurringTransaction(Transaction):
     end_date = models.DateField(null=True, blank=True)
     base_period = models.CharField(max_length=2, choices=BASE_PERIOD_CHOICES, blank=False)
     frequency = models.IntegerField()
-    is_salary = models.BooleanField(default=False)
 
     def __str__(self):
         if self.base_period == "" or self.base_period == None:

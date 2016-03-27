@@ -5,7 +5,7 @@ class OneOffTransactionForm(forms.ModelForm):
 
     class Meta:
         model = models.OneOffTransaction
-        fields = ('name', 'amount', 'date',)
+        fields = ('name', 'amount', 'date', 'is_salary',)
 
 class RecurringTransactionForm(forms.ModelForm):
 
