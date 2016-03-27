@@ -8,7 +8,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-md-4">
         <form action="{% url 'django.contrib.auth.views.login' %}" method="POST" class="form">
             {% csrf_token %}
             {% bootstrap_form form %}
@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-md-4">
         <p>Don't have an account? <a href="{% url 'register' %}">Register</a></p>
     </div>
 </div>
