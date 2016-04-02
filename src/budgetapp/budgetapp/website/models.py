@@ -30,7 +30,7 @@ class Transaction(models.Model):
         abstract = True
 
 class OneOffTransaction(Transaction):
-    date = models.DateField()
+    date = models.DateField(help_text='Use dd/mm/yyyy format')
 
     @classmethod
     def create(cls, transaction_date, amount, owner, is_salary, name = None):
@@ -75,8 +75,8 @@ class RecurringTransaction(Transaction):
         YEARLY: rrule.YEARLY
     }
 
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(help_text='Use dd/mm/yyyy format')
+    end_date = models.DateField(null=True, blank=True, help_text='Optional. Use dd/mm/yyyy format')
     base_period = models.CharField(max_length=2, choices=BASE_PERIOD_CHOICES, blank=False)
     frequency = models.IntegerField()
 
