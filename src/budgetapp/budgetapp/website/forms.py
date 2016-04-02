@@ -1,11 +1,19 @@
 from django import forms
 from . import models
+import datetime
 
 class OneOffTransactionForm(forms.ModelForm):
 
     class Meta:
         model = models.OneOffTransaction
         fields = ('name', 'amount', 'date', 'is_salary',)
+
+    def clean(self):
+        cleaned_data = super(OneOffTransactionForm, self).clean()
+        date = cleaned_data['date']
+        if date < datetime.date.today():
+            raise forms.ValidationError("You cannot add transactions with a date in the past")
+        return cleaned_data
 
 class RecurringTransactionForm(forms.ModelForm):
 
