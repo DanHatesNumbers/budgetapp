@@ -49,14 +49,12 @@ class RecurringTransaction(Transaction):
     DAILY = 'DA'
     WEEKLY = 'WK'
     MONTHLY = 'MO'
-    QUARTERLY = 'QR'
     YEARLY = 'YR'
     
     BASE_PERIOD_CHOICES = (
         (DAILY, 'Daily'),
         (WEEKLY, 'Weekly'),
         (MONTHLY, 'Monthly'),
-        (QUARTERLY, 'Quartly'),
         (YEARLY, 'Yearly')
     )
 
@@ -64,7 +62,6 @@ class RecurringTransaction(Transaction):
         DAILY: 'day',
         WEEKLY: 'week',
         MONTHLY: 'month',
-        QUARTERLY: 'quarter',
         YEARLY: 'year',
     }
 
@@ -105,7 +102,4 @@ class RecurringTransaction(Transaction):
         return list(rule)
 
     def get_rrule(self, end_date):
-        if self.base_period == self.QUARTERLY:
-            return rrule.rrule(MONTHLY, dtstart=self.start_date, until=end_date, interval=self.frequency*3)
-        else:
-            return rrule.rrule(self.RRULE_MAPPINGS[self.base_period], dtstart=self.start_date, until=end_date, interval=self.frequency)
+        return rrule.rrule(self.RRULE_MAPPINGS[self.base_period], dtstart=self.start_date, until=end_date, interval=self.frequency)
