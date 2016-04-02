@@ -49,27 +49,27 @@ class RecurringTransaction(Transaction):
     DAILY = 'DA'
     WEEKLY = 'WK'
     MONTHLY = 'MO'
-    YEARLY = 'YR'
+    ANNUALLY = 'AN'
     
     BASE_PERIOD_CHOICES = (
         (DAILY, 'Daily'),
         (WEEKLY, 'Weekly'),
         (MONTHLY, 'Monthly'),
-        (YEARLY, 'Yearly')
+        (ANNUALLY, 'Annually')
     )
 
     BASE_PERIOD_NAMES = {
         DAILY: 'day',
         WEEKLY: 'week',
         MONTHLY: 'month',
-        YEARLY: 'year',
+        ANNUALLY: 'year',
     }
 
     RRULE_MAPPINGS = {
         DAILY: rrule.DAILY,
         WEEKLY: rrule.WEEKLY,
         MONTHLY: rrule.MONTHLY,
-        YEARLY: rrule.YEARLY
+        ANNUALLY: rrule.YEARLY
     }
 
     start_date = models.DateField(help_text='Use dd/mm/yyyy format')
