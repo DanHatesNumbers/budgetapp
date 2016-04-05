@@ -8,11 +8,32 @@
         {% bootstrap_messages %}
         <form action="{% url 'recurring_add' %}" method="post" clas="form">
             {% csrf_token %}
-            {% bootstrap_form form %}
+            {% bootstrap_form_errors form type='non_fields' %}
+            {% bootstrap_field form.name %}
+            {% bootstrap_field form.amount %}
+            {% bootstrap_field form.start_date addon_after='<button class="btn btn-default" id="btn-startDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
+            {% bootstrap_field form.end_date addon_after='<button class="btn btn-default" id="btn-endDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
+            {% bootstrap_field form.base_period %}
+            {% bootstrap_field form.frequency %}
+            {% bootstrap_field form.is_salary %}
             {% buttons %}
             <button type="submit" class="btn btn-success">Submit</button>
             {% endbuttons %}
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script language="javascript">
+    $(document).ready(function() {
+        $("#btn-startDateToday").click(function() {
+            $("#id_start_date").val(new Date().toLocaleDateString('en-GB'));
+        });
+
+        $("#btn-endDateToday").click(function() {
+            $("#id_end_date").val(new Date().toLocaleDateString('en-GB'));
+        });
+    });
+</script>
 {% endblock %}
