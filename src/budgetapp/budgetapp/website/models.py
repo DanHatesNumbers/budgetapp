@@ -22,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Transaction(models.Model):
     name = models.CharField(max_length=120, null=True, blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, help_text='Use positive numbers for credits and negative numbers for debits')
     owner = models.ForeignKey(User)
     is_salary = models.BooleanField(default=False)
 
