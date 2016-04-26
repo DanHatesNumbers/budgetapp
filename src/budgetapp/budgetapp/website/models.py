@@ -52,10 +52,10 @@ class RecurringTransaction(Transaction):
     ANNUALLY = 'AN'
     
     BASE_PERIOD_CHOICES = (
-        (DAILY, 'Daily'),
-        (WEEKLY, 'Weekly'),
-        (MONTHLY, 'Monthly'),
-        (ANNUALLY, 'Annually')
+        (DAILY, 'Days'),
+        (WEEKLY, 'Weeks'),
+        (MONTHLY, 'Months'),
+        (ANNUALLY, 'Years')
     )
 
     BASE_PERIOD_NAMES = {
