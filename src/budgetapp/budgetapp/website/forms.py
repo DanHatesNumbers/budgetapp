@@ -10,16 +10,30 @@ class OneOffTransactionForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(OneOffTransactionForm, self).clean()
-        date = cleaned_data['date']
-        if date < datetime.date.today():
-            raise forms.ValidationError("You cannot add transactions with a date in the past")
-        return cleaned_data
+        try:
+            date = cleaned_data['date']
+            if date < datetime.date.today():
+                raise forms.ValidationError("You cannot add transactions with a date in the past")
+            return cleaned_data
+        except KeyError as err:
+            raise forms.ValidationError("Date was missing or couldn't be understood") from err
 
 class RecurringTransactionForm(forms.ModelForm):
 
     class Meta:
         model = models.RecurringTransaction
         fields = ('name', 'amount', 'start_date', 'end_date', 'base_period', 'frequency', 'is_salary',)
+
+    def clean(self):
+        cleaned_data = super(RecurringTransactionForm, self).clean()
+        try:
+            start_date = cleaned_data['start_date']
+        except KeyError as err:
+            raise forms.ValidationError("Start date was missing or couldn't be understood") from err
+        try:
+            end_date = cleaned_data['end_date']
+        except KeyError as err:
+            raise forms.ValidationError("End date was missing or couldn't be understood") from err
 
 class BalanceSheetForm(forms.Form):
     balance = forms.DecimalField(max_digits=10, decimal_places=2)
