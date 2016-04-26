@@ -13,9 +13,11 @@
             {% bootstrap_field form.amount %}
             {% bootstrap_field form.start_date addon_after='<button class="btn btn-default" id="btn-startDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
             {% bootstrap_field form.end_date addon_after='<button class="btn btn-default" id="btn-endDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
-            <div class="input-group">
-                <label class="control-label pull-left">Every</label>{% bootstrap_field form.frequency form_group_class="col-md-5" show_label=False %}
-                {% bootstrap_field form.base_period form_group_class="col-md-5" show_label=False %}
+            <div class="row">
+                <div class="input-group">
+                    <label class="control-label col-md-2">Every</label>{% bootstrap_field form.frequency form_group_class="col-md-5" show_label=False %}
+                    {% bootstrap_field form.base_period form_group_class="col-md-5" show_label=False %}
+                </div>
             </div>
             {% bootstrap_field form.is_salary %}
             {% buttons %}
