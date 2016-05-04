@@ -1,6 +1,24 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 
+{% block head %}
+<style>
+.double-input .form-control {
+    width: 50%;
+}
+
+.double-input .first .form-control {
+    border-right-width: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.double-input .form-control:focus {
+    border-right-width: 1px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <h2>Add New Recurring Transaction</h2>
 <div class="row">
@@ -13,8 +31,15 @@
             {% bootstrap_field form.amount %}
             {% bootstrap_field form.start_date addon_after='<button class="btn btn-default" id="btn-startDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
             {% bootstrap_field form.end_date addon_after='<button class="btn btn-default" id="btn-endDateToday" type="button">Today</button' addon_after_class="input-group-btn" %}
-            {% bootstrap_field form.base_period %}
-            {% bootstrap_field form.frequency %}
+			<div class="form-group">
+                <div class="input-group double-input">
+                    <div class="input-group-addon">
+                        Every
+                    </div>
+                    {% bootstrap_field form.frequency form_group_class="first" show_label=False %}
+                    {% bootstrap_field form.base_period form_group_class="" show_label=False %}
+                </div>
+            </div>
             {% bootstrap_field form.is_salary %}
             {% buttons %}
             <button type="submit" class="btn btn-success">Submit</button>
