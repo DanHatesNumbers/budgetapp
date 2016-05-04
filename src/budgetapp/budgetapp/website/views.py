@@ -223,12 +223,11 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             current_balance += transaction.amount
             transaction.balance = current_balance
         
-        for transaction in all_transactions:
-            if transaction.is_salary:
-                remaining_transactions = itertools.takewhile(lambda t: t.is_salary != True, all_transactions[all_transactions.index(transaction)+1:])
-                transaction.unallocated = transaction.amount + sum(map(lambda t: t.amount, remaining_transactions))
+        for transactionPair in pairwise(filter(lambda t: t.is_salary, all_transactions)):
+            transactionPair[1].unallocated = transactionPair[1].balance - transactionPair[0].balance    
 
         return all_transactions
+
 
 class UserRegistrationView(FormView):
     form_class = forms.UserRegistrationForm
@@ -268,3 +267,8 @@ class UserProfileManagementView(FormView):
             update_session_auth_hash(self.request, self.user)
 
         return super(UserProfileManagementView, self).form_valid(form)
+
+def pairwise(iterable):
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return zip(a,b)
