@@ -204,7 +204,8 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         return render(request, self.template_name, {'form': form})
 
     def generate_transaction_list(self, balance):
-        end_date = datetime.datetime.now().replace(year=2017).date()
+        current_date = datetime.datetime.now()
+        end_date = current_date.replace(year=current_date.year + 1).date()
         oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
 
         end_date_optional = Q(end_date__isnull=True)
