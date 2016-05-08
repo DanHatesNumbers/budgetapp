@@ -204,12 +204,12 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         return render(request, self.template_name, {'form': form})
 
     def generate_transaction_list(self, balance):
-        current_date = datetime.datetime.now()
-        end_date = current_date.replace(year=current_date.year + 1).date()
-        oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=datetime.date.today()))
+        current_date = datetime.datetime.now().date()
+        end_date = current_date.replace(year=current_date.year + 1)
+        oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=current_date))
 
         end_date_optional = Q(end_date__isnull=True)
-        end_date_in_range = Q(end_date__gte=datetime.date.today())
+        end_date_in_range = Q(end_date__gte=current_date)
         recurrings = self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
 
         expanded_recurrings = list()
