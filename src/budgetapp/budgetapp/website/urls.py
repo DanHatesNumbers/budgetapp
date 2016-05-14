@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^transactions/recurring/(?P<pk>\d+)/edit$', views.RecurringEditView.as_view(), name='recurring_edit'),
     url(r'^transactions/recurring/(?P<pk>\d+)/delete$', views.RecurringDeleteView.as_view(), name='recurring_delete'),
     url(r'^balancesheet$', views.BalanceSheetView.as_view(), name='balance_sheet'),
+    url(r'^financialplanning$', views.FinancialPlanningView.as_view(), name='financial_planner'),
     url(r'^login$', auth.views.login),
     url(r'^logout$', auth.views.logout),
     url(r'^register$', views.UserRegistrationView.as_view(), name='register'),

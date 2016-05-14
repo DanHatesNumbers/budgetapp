@@ -203,6 +203,15 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             return HttpResponseRedirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 
+class FinancialPlanningView(LoginRequiredMixin, TemplateView):
+    template_name = "financialplanner.html"
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        oneoffs = user.oneofftransaction_set
+        recurrings = user.recurringtransaction_set
+        transactions = filter(lambda t: t.is_salary, generate_transaction_list(balance=Decimal(0.0), oneoffs=oneoffs, recurrings=recurrings))
+        return render(request, self.template_name, {'transactions': transactions})
 
 
 class UserRegistrationView(FormView):

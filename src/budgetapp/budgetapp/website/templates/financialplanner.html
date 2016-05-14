@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Financial Planner</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {% if transactions %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Amount</td>
+                    <td>Unallocated</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.amount|stringformat:"1.2f" }}</td>
+                    <td>{% if transaction.unallocated != None %}{{ transaction.unallocated|stringformat:"1.2f" }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>You don't appear to have any transactions setup</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
