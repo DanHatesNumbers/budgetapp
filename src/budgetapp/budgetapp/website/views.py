@@ -185,7 +185,7 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         initial = {'balance': balance}
         form = self.form_class(initial=initial)
 
-        transaction_list = self.generate_transaction_list(balance)
+        transaction_list = generate_transaction_list(balance=balance, oneoffs=self.request.user.oneofftransaction_set, recurrings=self.request.user.recurringtransaction_set)
         paginator = Paginator(transaction_list, 25)
         page = self.request.GET.get('page')
         try:
@@ -203,31 +203,6 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
             return HttpResponseRedirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 
-    def generate_transaction_list(self, balance):
-        current_date = datetime.datetime.now().date()
-        end_date = current_date.replace(year=current_date.year + 1)
-        oneoffs = list(self.request.user.oneofftransaction_set.filter(date__gte=current_date))
-
-        end_date_optional = Q(end_date__isnull=True)
-        end_date_in_range = Q(end_date__gte=current_date)
-        recurrings = self.request.user.recurringtransaction_set.filter(end_date_optional | end_date_in_range)
-
-        expanded_recurrings = list()
-        for transaction in recurrings:
-            dates = transaction.get_dates(end_date)
-            expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.is_salary, transaction.name), dates)
-            expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
-
-        all_transactions = sorted(sorted(oneoffs + expanded_recurrings, key=attrgetter('amount')), key=attrgetter('date'))
-        current_balance = Decimal(balance)
-        for transaction in all_transactions:
-            current_balance += transaction.amount
-            transaction.balance = current_balance
-        
-        for transactionPair in pairwise(filter(lambda t: t.is_salary, all_transactions)):
-            transactionPair[1].unallocated = transactionPair[1].balance - transactionPair[0].balance    
-
-        return all_transactions
 
 
 class UserRegistrationView(FormView):
@@ -273,3 +248,29 @@ def pairwise(iterable):
     a, b = itertools.tee(iterable)
     next(b, None)
     return zip(a,b)
+
+def generate_transaction_list(balance=Decimal(0.0), oneoffs=None, recurrings=None):
+    current_date = datetime.datetime.now().date()
+    end_date = current_date.replace(year=current_date.year + 1)
+    oneoffs = list(oneoffs.filter(date__gte=current_date))
+
+    end_date_optional = Q(end_date__isnull=True)
+    end_date_in_range = Q(end_date__gte=current_date)
+    recurrings = recurrings.filter(end_date_optional | end_date_in_range)
+
+    expanded_recurrings = list()
+    for transaction in recurrings:
+        dates = transaction.get_dates(end_date)
+        expanded_oneoffs = map(lambda date: models.OneOffTransaction.create(date.date(), transaction.amount, transaction.owner, transaction.is_salary, transaction.name), dates)
+        expanded_recurrings += filter(lambda transaction: datetime.date.today() <= transaction.date, expanded_oneoffs)
+
+    all_transactions = sorted(sorted(oneoffs + expanded_recurrings, key=attrgetter('amount')), key=attrgetter('date'))
+    current_balance = Decimal(balance)
+    for transaction in all_transactions:
+        current_balance += transaction.amount
+        transaction.balance = current_balance
+    
+    for transactionPair in pairwise(filter(lambda t: t.is_salary, all_transactions)):
+        transactionPair[1].unallocated = transactionPair[1].balance - transactionPair[0].balance    
+
+    return all_transactions
