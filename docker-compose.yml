@@ -14,7 +14,15 @@ django:
         - "8000"
     links:
         - postgres
+    environment:
+        DJANGO_SECRET_KEY: 'MsX?#6A~Z`zi)a<g*LzzO&BQ?)~f&wlx{.a]}:E£3BGofYOHKH'
+        DJANGO_DB_USER: 'budgetapp'
+        DJANGO_DB_PASSWORD: 'budgetapp'
+        DJANGO_DEBUG: 'True'
     command: gunicorn --chdir /code/budgetapp budgetapp.wsgi --reload --bind 0.0.0.0:8000
 
 postgres:
     image: postgres:9.5
+    environment:
+        POSTGRES_USER: budgetapp
+        POSTGRES_PASSWORD: budgetapp

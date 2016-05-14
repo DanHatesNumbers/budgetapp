@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'jjqcq*a745ti(_!#9*v0v4=9!co$819a06k(&%x3-u=^!)!y1-'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DJANGO_DEBUG']
 
 ALLOWED_HOSTS = []
 
@@ -84,10 +84,10 @@ WSGI_APPLICATION = 'budgetapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'budgetapp',
-        'USER': 'budgetapp_user',
-        'PASSWORD': 'budgetapp_password',
-        'HOST': 'localhost',
+        'NAME': os.environ['DJANGO_DB_USER'],
+        'USER': os.environ['DJANGO_DB_USER'], 
+        'PASSWORD': os.environ['DJANGO_DB_PASSWORD'],
+        'HOST': 'postgres',
         'PORT': '',
     }
 }
