@@ -20,7 +20,7 @@ django:
         DJANGO_DB_PASSWORD: 'budgetapp'
         DJANGO_DEBUG: 'True'
     volumes:
-        - ./src:/code:ro
+        - ./src:/code
     command: gunicorn --chdir /code/budgetapp budgetapp.wsgi --reload --bind 0.0.0.0:8000
 
 postgres:
