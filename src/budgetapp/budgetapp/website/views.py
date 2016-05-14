@@ -210,8 +210,18 @@ class FinancialPlanningView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         oneoffs = user.oneofftransaction_set
         recurrings = user.recurringtransaction_set
-        transactions = filter(lambda t: t.is_salary, generate_transaction_list(balance=Decimal(0.0), oneoffs=oneoffs, recurrings=recurrings))
-        return render(request, self.template_name, {'transactions': transactions})
+        transactions = [t for t in generate_transaction_list(balance=Decimal(0.0), oneoffs=oneoffs, recurrings=recurrings) if t.is_salary]
+        total_unallocated = sum([t.unallocated for t in transactions if hasattr(t, 'unallocated')])
+        start_date = datetime.date.today()
+        end_date = start_date.replace(year=start_date.year + 1)
+
+        diff_days = (end_date - start_date).days
+        diff_weeks = diff_days // 7
+        diff_months = (end_date.year - start_date.year) * 12 + start_date.month - end_date.month
+        daily_unallocated = total_unallocated / diff_days
+        weekly_unallocated = total_unallocated / diff_weeks
+        monthly_unallocated = total_unallocated / diff_months
+        return render(request, self.template_name, {'transactions': transactions, 'total_unallocated': total_unallocated, 'monthly_unallocated': monthly_unallocated, 'weekly_unallocated': weekly_unallocated, 'daily_unallocated': daily_unallocated})
 
 
 class UserRegistrationView(FormView):

@@ -7,28 +7,44 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
         {% if transactions %}
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <td>Date</td>
-                    <td>Amount</td>
-                    <td>Unallocated</td>
-                </tr>
-            </thead>
-            <tbody>
-            {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.date }}</td>
-                    <td>{{ transaction.amount|stringformat:"1.2f" }}</td>
-                    <td>{% if transaction.unallocated != None %}{{ transaction.unallocated|stringformat:"1.2f" }}{% endif %}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>Date</td>
+                        <td>Amount</td>
+                        <td>Unallocated</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.amount|stringformat:"1.2f" }}</td>
+                        <td>{% if transaction.unallocated != None %}{{ transaction.unallocated|stringformat:"1.2f" }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-offset-1 col-md-4">
+            <ul class="list-group">
+                <li class="list-group-item {% if monthly_unallocated >= 0 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+                    Monthly Disposable: {{ monthly_unallocated|stringformat:"1.2f" }}
+                </li>
+                <li class="list-group-item {% if weekly_unallocated >= 0 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+                    Weekly Disposable: {{ weekly_unallocated|stringformat:"1.2f" }}
+                </li>
+                <li class="list-group-item {% if daily_unallocated >= 0 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+                    Daily Disposable: {{ daily_unallocated|stringformat:"1.2f" }}
+                </li>
+            </ul>
+        </div>
         {% else %}
-        <p>You don't appear to have any transactions setup</p>
+        <div class="col-md-12">
+            <p>You don't appear to have any transactions setup</p>
+        </div>
         {% endif %}
     </div>
 </div>
