@@ -1,0 +1,20 @@
+nginx:
+    build: ./nginx
+    links:
+        - django
+    ports:
+        - "80:80"
+    volumes:
+        - ./src/budgetapp/media:/code/media
+        - ./src/budgetapp/static:/code/static
+
+django:
+    build: .
+    expose:
+        - "8000"
+    links:
+        - postgres
+    command: gunicorn --chdir /code/budgetapp budgetapp.wsgi --reload --bind 0.0.0.0:8000
+
+postgres:
+    image: postgres:9.5
